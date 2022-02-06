@@ -1,0 +1,40 @@
+db.getCollection('candleStick').aggregate([
+ {
+   $match: {
+     isin: "LS342I184454",
+   },
+ },
+ {
+   $group: {
+     _id: {
+       openTimestamp: {
+         $dateTrunc: {
+           date: "$time",
+           unit: "minute",
+           binSize: 1
+         },
+       },
+     },
+	 openPrice: { $first: "$price" },
+     highPrice: { $max: "$price" },
+     lowPrice: { $min: "$price" },
+     closePrice: { $last: "$price" },
+   },
+   
+ },
+ {$project: {
+          _id: 0,
+          openTimestamp: "$_id.openTimestamp",
+          openPrice: "$openPrice",
+          highPrice: "$highPrice",
+          lowPrice: "$lowPrice",
+          closingPrice: "$closePrice",
+          closeTimestamp: { $dateAdd: { startDate: "$_id.openTimestamp", unit: "minute", amount: 1 } }  
+        }
+      },
+ {
+   $sort: {
+     "openTimestamp": 1,
+   },
+ },
+])
