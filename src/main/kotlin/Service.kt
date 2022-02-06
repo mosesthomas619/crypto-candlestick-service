@@ -22,6 +22,7 @@ class Service : CandlestickManager {
 
 
     /*
+    The Raw mongo aggregation query is uploaded in the root of the repo.
     The aggregation pipeline consists of 4 operations:
     $match : filters the mongo time series collection records based on the isin value provided
 
@@ -140,11 +141,11 @@ class Service : CandlestickManager {
     private fun mongoSetup(host: String): MongoDatabase {
         val mongoClient = MongoClient(host, 27017)
         val database = mongoClient.getDatabase("regDB")
-       // val tsOptions = TimeSeriesOptions("time")
-       // tsOptions.metaField("isin")
-       // val collOptions = CreateCollectionOptions().timeSeriesOptions(tsOptions).expireAfter(1800, TimeUnit.SECONDS)
-       // database.createCollection("candleStick", collOptions)
-       // database.createCollection("instrument")
+        val tsOptions = TimeSeriesOptions("time")
+        tsOptions.metaField("isin")
+        val collOptions = CreateCollectionOptions().timeSeriesOptions(tsOptions).expireAfter(1800, TimeUnit.SECONDS)
+        database.createCollection("candleStick", collOptions)
+        database.createCollection("instrument")
         return database
     }
 
